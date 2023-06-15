@@ -1,4 +1,4 @@
-from lab2_solutions import *
+from lab2_algorithms import *
 from time import time
 from math import sqrt
 from lab2_util_eval import all_fn_dicts, always_zero

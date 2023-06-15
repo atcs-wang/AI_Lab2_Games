@@ -1,11 +1,15 @@
 # Lab 2: Games (Connect-4, Roomba Race)
 # Name(s): Mr. Wang
 # Email(s): matwan@bergen.org
+from __future__ import annotations
+# from types import NoneType
+from typing import List, Collection, Tuple, Callable, Optional, Union, Set, Dict, Type, Iterable
+
 import random # choice, shuffle methods
 import math # optional, remove later
 from time import time
 from collections import defaultdict # optional, remove later
-from gamestatenode import GameStateNode
+from gamestatenode import GameAction, GameStateNode
 from lab2_util_eval import always_zero
 
 INF = float('inf')
@@ -69,21 +73,15 @@ for your algorithms.
 It takes similar parameters and returns the same 4-tuple as the algorithms you must write in Parts 1 and 2.
 """
 
-def RandChoice(initial_state,
-    util_fn,                        # Endgame Utility Evaluation function. Takes a state and the maximizing player as parameters
-    eval_fn = always_zero,          # Cutoff Heuristic Evaluation function. Takes a state and the maximizing player as parameters
-    cutoff = INF,                   # Cutoff depth
-        # state_callback_fn is a callback function for communicating with a GUI.
-        # Pass it a state and its value (None if not calculated) to have it displayed.
-        # If it returns True, terminate
-    state_callback_fn = lambda state, state_value : False,
-        # Some things to keep count of.
-        # Increment counter['num_endgame_evals'] whenever util_fn is called.
-        # Increment counter['num_heuristic_evals'] whenever eval_fn is called.
-    counter = {'num_nodes_seen':0,'num_endgame_evals':0, 'num_heuristic_evals':0}, # A counter for tracking stats
-    random_move_order = False,     # If true, consider moves in random order [IGNORED]
-    transposition_table = False    # If true, use a transposition table. [IGNORED]
-    ):
+def RandChoice(initial_state : GameStateNode,
+    util_fn : Callable[[GameStateNode, int],Union[int,float]],               # Endgame Utility Evaluation function. 
+    eval_fn : Callable[[GameStateNode, int],Union[int,float]] = always_zero, # Cutoff Heuristic Evaluation function. 
+    cutoff : Union[int, float] = INF, # Cutoff depth
+    state_callback_fn : Callable[[GameStateNode,Union[int,float,None]],bool] = lambda state, state_value : False,
+    counter : Dict[str,int] = {'num_nodes_seen':0,'num_endgame_evals':0, 'num_heuristic_evals':0}, # A counter for tracking stats
+    random_move_order : bool = False,     # If true, consider moves in random order [IGNORED]
+    transposition_table : bool = False    # If true, use a transposition table. [IGNORED]
+    ) -> Tuple[Union[GameAction , None], GameStateNode, Union[int,float], bool]: # Returns 4-tuple: (best action at initial_state, leaf statenode of best/expected path, expected utility of best action (i.e. initial_state), if terminated)
 
     """
     Searches down a single path of the game tree.
@@ -94,7 +92,7 @@ def RandChoice(initial_state,
     # A recursive helper function.
     # Has access to all the parameters of the outer function,
     # avoids excessive passing of unchanging parameters
-    def RandChoice_helper(state):
+    def RandChoice_helper(state : GameStateNode):
         counter['num_nodes_seen'] += 1
         # Base case - endgame leaf node:
         if state.is_endgame_state() :
@@ -184,6 +182,9 @@ state_callback_fn: GUI callback function. It takes two parameters:
 
 counter: A dict with stats to maintain count of. Count the number of nodes seen (visited),
     and the number of endgame/heuristic evaluations performed (calls to util_fn and eval_fn).
+        # Some things to keep count of.
+        # Increment counter['num_endgame_evals'] whenever util_fn is called.
+        # Increment counter['num_heuristic_evals'] whenever eval_fn is called.
 
 random_move_order: A True/False flag indicating whether moves should be
     considered in random order or default order.
@@ -201,14 +202,14 @@ Returns the following 4-tuple.
     4) Whether or not terminated search early from the state_callback_fn (True/False)
 """
 
-def MaximizingDFS(initial_state,
-    util_fn,
-    eval_fn = always_zero,
-    cutoff = INF,
-    state_callback_fn = lambda state, state_value : False, # A callback function for the GUI. If it returns True, terminate
-    counter = {'num_nodes_seen':0,'num_endgame_evals':0, 'num_heuristic_evals':0}, # A counter for tracking stats,
-    random_move_order = False,     # If true, consider moves in random order
-    transposition_table = False    # If true, use a transposition table. [IGNORE until Part 2]
+def MaximizingDFS(initial_state : GameStateNode,
+    util_fn : Callable[[GameStateNode, int],Union[int,float]],               # Endgame Utility Evaluation function. 
+    eval_fn : Callable[[GameStateNode, int],Union[int,float]] = always_zero, # Cutoff Heuristic Evaluation function. 
+    cutoff : Union[int, float] = INF, # Cutoff depth
+    state_callback_fn : Callable[[GameStateNode,Union[int,float,None]],bool] = lambda state, state_value : False,
+    counter : Dict[str,int] = {'num_nodes_seen':0,'num_endgame_evals':0, 'num_heuristic_evals':0}, # A counter for tracking stats
+    random_move_order : bool = False,     # If true, consider moves in random order 
+    transposition_table : bool = False    # If true, use a transposition table. [IGNORE until Part 2]
     ):
     """
     Searches down ALL paths of the game tree, performing Maximizing Depth First Search

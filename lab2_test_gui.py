@@ -12,7 +12,7 @@ from sys import argv
 from time import time, sleep
 from math import sqrt
 from tkinter import * # Tk, Canvas, Frame, Listbox, Button, Checkbutton, IntVar, StringVar, Spinbox, Label
-from lab2_solutions import *
+from lab2_algorithms import *
 from gamestatenode import GameStateNode
 from connectfour_gamestate import ConnectFourGameState
 from tictactoe_gamestate import TicTacToeGameState

@@ -2,7 +2,11 @@
 # Name(s): Mr. Wang
 # Email(s): matwan@bergen.org
 
+from __future__ import annotations
+from typing import List, Collection, Tuple, Callable, Optional, Union, Set, Dict, Type, Iterable
+
 from connectfour_gamestate import ConnectFourGameState
+from gamestatenode import GameStateNode
 from tictactoe_gamestate import TicTacToeGameState
 from nim_gamestate import NimGameState
 from roomba_gamestate import RoombaRaceGameState
@@ -18,7 +22,7 @@ Some useful built-in python methods:
 
 ## General purpose evaluation functions: ###########
 
-def basic_endgame_utility(state, maximizer_player_num):
+def basic_endgame_utility(state : GameStateNode, maximizer_player_num : int) -> Union[int, float]:
     """ Given an endgame state and the player number of the "maximizer",
     returns utility 1000 if the maximizer has won,
     -1000 if the minimizer has won, or 0 in case of a tie.
@@ -31,7 +35,7 @@ def basic_endgame_utility(state, maximizer_player_num):
     else:
         return -1000
 
-def faster_endgame_utility(state, maximizer_player_num):
+def faster_endgame_utility(state : GameStateNode, maximizer_player_num : int) -> Union[int, float]:
     """ Given an endgame state and the player number of the "maximizer",
     returns 0 in case of a tie, or a utility with abs(score) >= 1000,
     returning larger absolute scores for winning/losing sooner.
@@ -47,7 +51,7 @@ def faster_endgame_utility(state, maximizer_player_num):
 
 
 
-def always_zero(state, maximizer_player_num):
+def always_zero(state : GameStateNode, maximizer_player_num : int) -> Union[int, float]:
     """ Always returns zero.
     Works as a dummy heuristic evaluation function for any situation.
     Truly useful heuristic evaluation functions must almost always be game-specific!
@@ -57,7 +61,7 @@ def always_zero(state, maximizer_player_num):
 
 ## Nim specific evaluation functions: ###########
 
-def empty_rows_eval_nim(state, maximizer_player_num):
+def empty_rows_eval_nim(state : NimGameState, maximizer_player_num : int) -> Union[int, float]:
     """ Given a non-endgame NimGameState, estimate the value
     (expected utility) of the state from maximizer_player_num's view.
 
@@ -79,11 +83,11 @@ nim_functions = {
 ## TicTacToe specific evaluation functions: ###########
 
 ## Edges are valued least, center valued highest.
-space_values_tictactoe = {  (0,0):2, (0,1):1, (0,2):2,
+space_values_tictactoe : Dict[Tuple[int,int],int] = {  (0,0):2, (0,1):1, (0,2):2,
                             (1,0):1, (1,1):3, (1,2):1,
                             (2,0):2, (2,1):1, (2,2):2}
 
-def space_values_eval_tictactoe(state, maximizer_player_num):
+def space_values_eval_tictactoe(state : TicTacToeGameState, maximizer_player_num : int) -> Union[int, float]:
     """ Given a non-endgame TicTacToeGameState, estimate the value
     (expected utility) of the state from maximizer_player_num's view.
 
@@ -102,7 +106,7 @@ def space_values_eval_tictactoe(state, maximizer_player_num):
                 eval_score -= space_values_tictactoe[(r,c)]
     return eval_score
 
-def win_paths_eval_tictactoe(state, maximizer_player_num):
+def win_paths_eval_tictactoe(state : TicTacToeGameState, maximizer_player_num : int) -> Union[int, float]:
     """ Given a non-endgame TicTacToeGameState, estimate the value
     (expected utility) of the state from maximizer_player_num's view.
 
@@ -149,7 +153,7 @@ tictactoe_functions = {
 ## Connect-four specific evaluation functions: ###########
 
 chain_scores = {0:0, 1:1, 2:3, 3:10, 4:100, -1:-1, -2:-3, -3:-10, -4:-100}
-def score_chains_connectfour(state, maximizer_player_num):
+def score_chains_connectfour(state : ConnectFourGameState, maximizer_player_num : int) -> Union[int, float]:
     """
     Given a non-endgame ConnectFourGameState, estimate the value
     (expected utility) of the state
@@ -165,7 +169,7 @@ def score_chains_connectfour(state, maximizer_player_num):
     return score
 
 
-def count_open_sequence(seq, maximizer_player_num):
+def count_open_sequence(seq : List[int], maximizer_player_num : int):
     """
     Given a list of piece numbers and 0s, seq:
     If only open spaces and maximizer pieces, return how many pieces.
@@ -191,7 +195,7 @@ def count_open_sequence(seq, maximizer_player_num):
 
 open_path_scores = {0:0, 1:1, 2:3, 3:10, 4:100, -1:-1, -2:-3, -3:-10, -4:-100}
 win_len = 4
-def open_paths_connectfour(state, maximizer_player_num):
+def open_paths_connectfour(state : ConnectFourGameState, maximizer_player_num : int) -> Union[int, float]:
     """
     Given a non-endgame ConnectFourGameState, estimate the value
     (expected utility) of the state
@@ -245,12 +249,12 @@ connectfour_functions = {
 
 
 
-def manhattan_distance_between_players(state):
+def manhattan_distance_between_players(state : RoombaRaceGameState):
     max_r, max_c = state.get_position(1)
     min_r, min_c = state.get_position(2)
     return abs(max_r - min_r) + abs(max_c - min_c)
 
-def freedom_eval_roomba(state, maximizer_player_num):
+def freedom_eval_roomba(state : RoombaRaceGameState, maximizer_player_num : int) -> Union[int, float]:
     """ Given a non-endgame RoombaRaceGameState, estimate the value
     (expected utility) of the state
     from maximizer_player_num's view.
@@ -297,7 +301,7 @@ def freedom_eval_roomba(state, maximizer_player_num):
     return diff    
 
 
-def minimize_distance_eval_roomba(state, maximizer_player_num):
+def minimize_distance_eval_roomba(state : RoombaRaceGameState, maximizer_player_num : int) -> Union[int, float]:
     """
     Given a non-endgame RoombaRaceGameState, estimate the value
     (expected utility) of the state
